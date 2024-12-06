@@ -8,17 +8,18 @@
 <body>
     <script>
 
-        let playerName = "";
-        let player = {
+        // variable and data type declaration and initialization
+        let playerName = ""; 
+        let player = {      
             health: 100,
             inventory: [],
             location: "Town",
             damage: 20,
         };
-        
+        // object creation and nesting
         const game = {
             locations: ["Forest", "Cave", "Town"],
-            enemies: {
+            enemies: { 
                 witch: { 
                     name: "Witch Margaret", 
                     damage: 20,
@@ -34,14 +35,14 @@
 
             },
         };
-
+        // function to start game 
         const startGame = () => {
             alert(" 🙋‍♂️Welcome to the JavaScript Adventure Game!\nIn this game, you play as a brave adventurer exploring various locations such as the Forest, Cave, and Town.\nYour main goal is to defeat dangerous enemies such as ghost, witch and demon. You can choose to fight or flee during encounters. Collect potions and cookies to restore health, if your health will be 0, you lose the game.\nThe adventure continues until you defeat the Demon Balthazar in the Cave.\nGood luck!")
             playerName = prompt("What is your name?");
             alert("Hello 👋🏻, " + playerName + "! Your adventure starts in the " + player.location + ".");
             gameMenu();
         };
-
+        // function displays game menu 
         const gameMenu = () => {
             if (player.health <= 0) {
                 alert("You have died! Game over.")
@@ -66,22 +67,20 @@
                     alert("⛔Invalid choice⛔. Try again.")
                     gameMenu();
             }
-
-
         };
-
+        // function for game exploration, loop, location choice, displays random event (enemy encouner or item found)
         const explore = () => {
             let location = prompt("Where do you want to go?\nOptions:\n" + game.locations.join("\n") + "\n(Enter a word of your choice)");
             if (game.locations.includes(location)) {
                 player.location = location;
-                aleert("You are now in the " + location + ".")
+                alert("You are now in the " + location + ".")
                 randomEvent();
             } else {
                 alert("⛔ Invalid location ⛔. Try again.");
                 explore();
             }
         };
-
+        // function creates random event
         const randomEvent = () => {
             let event = Math.random();
             if (event < 0.5) {
@@ -93,11 +92,11 @@
                 gameMenu();
             }
         };
-
+        // function for enemy encounter with action option : fight or flee
         const encounterEnemy = () => {
             let enemies = Object.values(game.enemies);
             let enemy = enemies[Math.floor(Math.random() * enemies.length)];
-            alert("A scary " + enemy.name + "appears!");
+            alert("A scary " + enemy.name + " appears!");
 
             let action = prompt("Do you want to: \n1. Fight ⚔️ \n2. Flee 🏃 \n(Enter the number of your choice)");
 
@@ -114,16 +113,70 @@
                     player.health -= enemy.damage / 2;
                     gameMenu();
             }
-
         };
+        // function to fight with enemy, counts health, counts who won
+        const fight = (enemy) => {
+            while (enemy.health > 0 && player.health > 0) {
+                enemy.health -= player.damage;
+                alert("You hit the " + enemy.name + ". It's health is now " + enemy.health);
+                if (enemy.health > 0) {
+                    player.health -= enemy.damage;
+                    alert("The " + enemy.name + " attacks! Your health is " + player.health);  
+                }
+            }
+            if (player.health > 0) {
+                alert("💪 You defeated the " + enemy.name + "! 🤩");
 
+                if (enemy.name === "Demon Balthazar" && player.location === "Cave") {
+                    alert("🎉 Congratulations! 🏅 You have completed the mission of the game! 🏆");
+                    return;
+                }
+            } else {
+                alert("You were defeated.😩💀"); 
+            }
+            gameMenu();
+        };
+        // function makes random item found, puts it to inventory
+        const findItem = () => {
+            let item = Math.random() < 0.5 ? "Potion" : "Cookie";
+            player.inventory = [...player.inventory, item]; 
+            alert("You found a " + item + "! 🕵🏻");
+            gameMenu();
+        };
+        // function to use items from inventory
+        const useItem = () => {
+            if (player.inventory.length === 0) {
+                alert("You have no items to use. 🙅");
+                return gameMenu();
+            }
+            let item = prompt("Your inventory: " + player.inventory.join(", ") + ". Which item do you want to use?");
+            if (player.inventory.includes(item)) {
+                if (player.health === 100) {
+                    alert("You already have full health! 💯");
+                    return gameMenu();
+                }
+                if (item === "Potion") {
+                    player.health = 100;
+                    alert("You used Potion🧪 and fully restored your health!");                
+                } else if (item === "Cookie") {
+                    player.health = Math.min(player.health + 20,100);
+                    alert("You used a Cookie 🥨 and restored +20 health");
+                }
+                player.inventory = [...player.inventory.filter(i => i !== item)];
+                } else {
+                    alert("⛔Invalid item!⛔ Try again");
+                }
+            gameMenu();
+        };
+        // function to check actual player status (name, health, damage, inventory items, last location went)
+        const checkStatus = () => {
+            alert("Player: " + playerName + "\nHealth: " + player.health + "\nDamage: " + player.damage + "\nInventory: " + player.inventory.join(", ") + "\nLocation: " + player.location);
+            gameMenu();
+        };
         
-
-
-
-
-    
+        // starting game
         startGame();
+
     </script>
 </body>
 </html>
